@@ -1,1 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Corporate Audit Management System dashboard UI">
+<title>AuditPro | Audit Management System</title>
+<style>
+:root{
+  --navy:#0b1f3a;--navy2:#102b4e;--blue:#174574;--gold:#c8a44d;--gold2:#e2c779;
+  --bg:#f4f6fa;--white:#fff;--text:#17263c;--muted:#738096;--line:#e4e9f1;
+  --green:#17845d;--greenbg:#e6f6ef;--amber:#a56b0a;--amberbg:#fff3d7;
+  --red:#b63b48;--redbg:#fdebed;--shadow:0 10px 28px rgba(12,31,58,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:var(--bg)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.login-screen{min-height:100vh;display:grid;grid-template-columns:1.04fr .96fr;background:var(--white)}
+.login-brand{position:relative;overflow:hidden;background:linear-gradient(145deg,var(--navy),#153b65);color:white;padding:54px clamp(28px,6vw,90px);display:flex;flex-direction:column;justify-content:space-between}
+.login-brand:before,.login-brand:after{content:"";position:absolute;border:1px solid rgba(226,199,121,.22);border-radius:50%;width:540px;height:540px;right:-180px;top:18%}
+.login-brand:after{width:390px;height:390px;right:-100px;top:27%;border-color:rgba(255,255,255,.1)}
+.brand-lockup{display:flex;align-items:center;gap:13px;position:relative;z-index:1}
+.brand-mark{height:46px;width:46px;display:grid;place-items:center;border-radius:13px;background:var(--gold);color:var(--navy);font-weight:900;font-size:20px;box-shadow:0 8px 22px #0002}
+.brand-name{font-size:18px;font-weight:800;letter-spacing:.4px}.brand-sub{font-size:11px;color:#c4d1e0;letter-spacing:1.6px;margin-top:3px}
+.brand-copy{position:relative;z-index:1;max-width:510px;margin:50px 0}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--gold2);font-weight:800}
+.brand-copy h1{font-size:clamp(34px,4vw,54px);line-height:1.08;margin:17px 0 18px;letter-spacing:-1.8px}
+.brand-copy p{color:#c8d5e4;line-height:1.75;font-size:15px;max-width:420px}
+.trust-row{position:relative;z-index:1;display:flex;gap:22px;flex-wrap:wrap;color:#d2dceb;font-size:12px}.trust-row span{display:flex;align-items:center;gap:8px}
+.gold-dot{width:7px;height:7px;background:var(--gold);border-radius:50%}
+.login-panel{display:flex;align-items:center;justify-content:center;padding:38px 26px}
+.login-card{width:min(100%,410px)}
+.login-card h2{font-size:29px;margin:0 0 8px;letter-spacing:-.7px;color:var(--navy)}
+.login-card .intro{color:var(--muted);font-size:14px;margin:0 0 30px;line-height:1.6}
+.field{margin-bottom:18px}.field label{display:block;font-size:12px;font-weight:750;color:#39485d;margin-bottom:8px}
+.input-wrap{position:relative}.field input,.field select,.field textarea{width:100%;border:1px solid #dbe2ec;border-radius:9px;padding:13px 14px;background:#fff;color:var(--text);outline:none;transition:.2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#507eae;box-shadow:0 0 0 3px #17457416}
+.field input.with-toggle{padding-right:70px}
+.show-pass{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--blue);font-size:11px;font-weight:800}
+.login-options{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 0 23px;font-size:12px}
+.check-label{display:flex;align-items:center;gap:7px;color:#637188}.check-label input{accent-color:var(--blue)}
+.link-btn{border:0;background:none;color:var(--blue);font-weight:750;font-size:12px;padding:0}
+.primary-btn{border:0;border-radius:9px;background:var(--navy);color:white;font-weight:750;padding:13px 18px;box-shadow:0 7px 15px #0b1f3a1a;transition:.2s}
+.primary-btn:hover{background:#153c66;transform:translateY(-1px)}
+.full{width:100%}.login-note{margin-top:22px;text-align:center;color:#8b96a7;font-size:11px;line-height:1.7}
+.login-error{color:var(--red);font-size:12px;margin:-7px 0 15px;line-height:1.5}
+.demo-hint{background:#f7f8fb;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:16px;color:#657287;font-size:11px;line-height:1.6}
+.app{min-height:100vh}.sidebar{position:fixed;z-index:20;left:0;top:0;bottom:0;width:248px;background:var(--navy);color:white;display:flex;flex-direction:column;padding:24px 15px 18px;transition:transform .25s}
+.sidebar .brand-lockup{padding:0 8px 28px}.sidebar .brand-mark{width:39px;height:39px;border-radius:11px;font-size:17px}
+.nav-caption{font-size:9px;text-transform:uppercase;letter-spacing:1.7px;color:#8094ad;padding:13px 12px 8px;font-weight:800}
+.nav-list{display:flex;flex-direction:column;gap:4px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 12px;border:0;border-radius:8px;background:transparent;color:#c1cddd;text-align:left;font-size:12px;font-weight:650;transition:.15s;width:100%}
+.nav-item:hover{background:#ffffff0d;color:white}.nav-item.active{background:#ffffff14;color:white;box-shadow:inset 3px 0 var(--gold)}
+.nav-icon{width:18px;text-align:center;font-size:16px;color:var(--gold2)}
+.nav-count{margin-left:auto;background:#c8a44d24;color:#f1d78b;border-radius:20px;padding:3px 7px;font-size:10px}
+.sidebar-bottom{margin-top:auto;border-top:1px solid #ffffff17;padding:17px 8px 0}
+.help-card{background:#ffffff0b;border:1px solid #ffffff12;border-radius:10px;padding:13px;margin-bottom:15px}
+.help-card strong{font-size:11px}.help-card p{font-size:10px;color:#a9b8ca;line-height:1.6;margin:7px 0 10px}
+.help-card button{background:transparent;color:var(--gold2);border:0;padding:0;font-size:10px;font-weight:800}
+.profile-mini{display:flex;align-items:center;gap:10px;padding:7px 4px}
+.avatar{height:34px;width:34px;display:grid;place-items:center;border-radius:50%;background:#e7d39b;color:var(--navy);font-size:11px;font-weight:900;flex-shrink:0}
+.profile-mini strong{display:block;font-size:11px}.profile-mini small{display:block;color:#9eafc4;font-size:10px;margin-top:4px}
+.logout{margin-left:auto;border:0;background:none;color:#a8b7ca;font-size:16px}
+.main{margin-left:248px;min-height:100vh}
+.topbar{height:75px;background:white;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 30px;gap:18px;position:sticky;top:0;z-index:10}
+.topbar-left{display:flex;align-items:center;gap:14px}.hamburger{display:none;border:0;background:#f3f5f9;border-radius:8px;padding:8px;color:var(--navy)}
+.breadcrumb{font-size:11px;color:#8a96a8}.breadcrumb strong{color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:18px}
+.search-box{position:relative}.search-box input{border:1px solid var(--line);background:#f8f9fc;border-radius:8px;padding:10px 12px 10px 34px;width:210px;font-size:11px;outline:none}
+.search-box span{position:absolute;left:12px;top:8px;color:#8995a6}
+.icon-btn{position:relative;border:0;background:transparent;color:#718096;font-size:18px;padding:6px}
+.notification-dot{position:absolute;right:3px;top:3px;width:6px;height:6px;border-radius:50%;background:var(--gold);border:1px solid white}
+.top-user{display:flex;align-items:center;gap:9px}.top-user strong{font-size:11px;display:block}.top-user small{font-size:10px;color:#8a96a8;display:block;margin-top:3px}
+.content{padding:27px 30px 38px;max-width:1600px;margin:auto}
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:23px}
+.page-head h1{margin:0;color:var(--navy);font-size:25px;letter-spacing:-.8px}.page-head p{margin:7px 0 0;color:var(--muted);font-size:12px}
+.head-actions{display:flex;gap:9px;flex-wrap:wrap}.secondary-btn{background:white;border:1px solid #dce3ed;color:#40516a;border-radius:8px;padding:10px 13px;font-size:11px;font-weight:750}
+.secondary-btn:hover{border-color:#9eb0c6}.gold-btn{background:var(--gold);color:var(--navy);border:0;border-radius:8px;padding:10px 14px;font-size:11px;font-weight:850}.gold-btn:hover{background:var(--gold2)}
+.filter-strip{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.filter-chip{border:1px solid var(--line);border-radius:7px;padding:8px 11px;background:white;color:#617087;font-size:10px}
+.filter-chip strong{color:var(--text)}
+.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:18px}
+.metric-card{background:white;border:1px solid #e8edf4;border-radius:12px;padding:18px;box-shadow:0 3px 10px #102b4e05;min-width:0}
+.metric-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.metric-label{font-size:11px;color:#718096;font-weight:700}
+.metric-icon{width:35px;height:35px;display:grid;place-items:center;border-radius:9px;background:#eef3fa;color:var(--blue);font-size:17px}
+.metric-value{font-size:29px;font-weight:850;letter-spacing:-1px;color:var(--navy);margin:13px 0 8px}
+.metric-foot{font-size:10px;color:#8390a2}.trend-up{color:var(--green);font-weight:800}.trend-warn{color:var(--amber);font-weight:800}
+.dashboard-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:17px;margin-bottom:18px}
+.panel{background:white;border:1px solid #e8edf4;border-radius:12px;box-shadow:0 3px 10px #102b4e05;min-width:0}
+.panel-head{padding:17px 19px 13px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.panel-head h3{font-size:13px;margin:0;color:var(--navy)}.panel-head p{font-size:10px;color:#8995a6;margin:5px 0 0}
+.panel-action{border:0;background:none;color:var(--blue);font-size:10px;font-weight:800}
+.chart-wrap{padding:0 18px 17px}.chart-legend{display:flex;gap:15px;flex-wrap:wrap;font-size:10px;color:#778499}
+.legend-item{display:flex;align-items:center;gap:6px}.legend-dot{width:7px;height:7px;border-radius:2px}
+.bar-chart{height:190px;display:flex;align-items:flex-end;gap:clamp(8px,2vw,22px);padding:15px 5px 0;border-bottom:1px solid var(--line);background:repeating-linear-gradient(to bottom,transparent 0,transparent 43px,#eef1f6 44px,#eef1f6 45px)}
+.bar-group{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:4px;height:100%;position:relative;min-width:0}
+.bar{width:min(23px,38%);border-radius:4px 4px 0 0;min-height:3px;transition:height .3s}.bar.planned{background:#d9c58e}.bar.completed{background:var(--blue)}
+.bar-label{position:absolute;bottom:-21px;font-size:9px;color:#8b96a7}
+.chart-spacer{height:22px}
+.risk-content{padding:4px 19px 20px}
+.risk-row{display:grid;grid-template-columns:82px 1fr 28px;gap:10px;align-items:center;margin:16px 0}
+.risk-row span{font-size:10px;color:#647188}.risk-row strong{font-size:11px;text-align:right}
+.track{height:7px;border-radius:20px;background:#eef1f6;overflow:hidden}.fill{height:100%;border-radius:20px}.fill.high{background:#c14b55}.fill.medium{background:#d9a43b}.fill.low{background:#309c75}
+.risk-note{margin-top:20px;border-radius:8px;background:#fff8e8;border:1px solid #f4e4b7;padding:11px 12px;font-size:10px;color:#80601e;line-height:1.6}
+.activity-panel{margin-bottom:18px}.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;white-space:nowrap}
+th{background:#fafbfd;color:#8290a4;font-size:9px;letter-spacing:.7px;text-transform:uppercase;text-align:left;padding:12px 17px;font-weight:800;border-top:1px solid #f0f2f6;border-bottom:1px solid #edf0f5}
+td{padding:14px 17px;border-bottom:1px solid #f0f2f6;font-size:11px;color:#526176}
+tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:#fbfcfe}
+.audit-name{font-weight:800;color:#20324a}.subline{font-size:9px;color:#8b96a7;margin-top:4px}
+.status{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:5px 8px;font-size:9px;font-weight:800}
+.status:before{content:"";height:5px;width:5px;border-radius:50%;background:currentColor}
+.status.in-progress{background:#eaf1fc;color:#315f9d}.status.completed{background:var(--greenbg);color:var(--green)}.status.pending{background:var(--amberbg);color:var(--amber)}.status.overdue{background:var(--redbg);color:var(--red)}
+.priority{font-weight:800;font-size:10px}.priority.high{color:var(--red)}.priority.medium{color:var(--amber)}.priority.low{color:var(--green)}
+.row-actions{border:0;background:none;color:#7e8ba0;font-size:18px}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}
+.schedule-list{padding:0 19px 14px}
+.schedule-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f0f2f6}.schedule-item:last-child{border-bottom:0}
+.date-box{width:42px;height:45px;border-radius:8px;background:#f3f6fa;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.date-box strong{font-size:15px;color:var(--navy)}.date-box small{font-size:8px;color:#7f8ca0;text-transform:uppercase;font-weight:800}
+.schedule-copy{min-width:0;flex:1}.schedule-copy strong{display:block;font-size:11px;color:#2c3d54}.schedule-copy small{display:block;font-size:10px;color:#8995a6;margin-top:5px}
+.schedule-tag{font-size:9px;color:var(--blue);background:#eef3fa;padding:5px 7px;border-radius:5px}
+.compliance-score{display:flex;align-items:center;gap:20px;padding:9px 20px 22px}
+.donut{height:112px;width:112px;border-radius:50%;background:conic-gradient(var(--blue) 0 82%,#e9edf4 82% 100%);display:grid;place-items:center;flex-shrink:0;position:relative}
+.donut:after{content:"";position:absolute;inset:12px;background:white;border-radius:50%}
+.donut-inner{position:relative;z-index:1;text-align:center}.donut-inner strong{display:block;font-size:24px;color:var(--navy)}.donut-inner small{font-size:9px;color:#8490a2}
+.compliance-legend{flex:1}.compliance-legend .legend-row{display:flex;justify-content:space-between;gap:10px;margin:12px 0;font-size:10px;color:#65738a}.compliance-legend strong{color:#25364e}
+.page-section{display:none}.page-section.active{display:block}
+.module-panel{background:white;border:1px solid #e8edf4;border-radius:12px;padding:20px;margin-bottom:16px}
+.module-panel h3{font-size:14px;color:var(--navy);margin:0 0 7px}.module-panel p{font-size:12px;color:var(--muted);line-height:1.7}
+.module-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.module-card{background:white;border:1px solid #e6ebf3;border-radius:11px;padding:17px;min-width:0}
+.module-card .module-icon{height:37px;width:37px;border-radius:9px;background:#eef3fa;display:grid;place-items:center;color:var(--blue);font-size:17px;margin-bottom:13px}
+.module-card h4{font-size:12px;margin:0 0 7px;color:var(--navy)}.module-card p{font-size:10px;line-height:1.6;color:#8290a3;margin:0 0 13px}.module-card button{font-size:10px}
+.empty-state{text-align:center;padding:35px;color:#8190a4;font-size:12px}
+.toast{position:fixed;right:22px;bottom:22px;z-index:100;background:var(--navy);color:white;padding:13px 17px;border-radius:9px;box-shadow:var(--shadow);font-size:12px;max-width:320px;animation:rise .2s ease}
+@keyframes rise{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-backdrop{position:fixed;inset:0;z-index:90;background:#07162bb0;display:grid;place-items:center;padding:20px}
+.modal{width:min(100%,520px);background:white;border-radius:14px;box-shadow:0 25px 80px #0004;overflow:hidden}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:19px 22px;border-bottom:1px solid var(--line)}.modal-head h3{font-size:15px;color:var(--navy);margin:0}
+.modal-close{border:0;background:#f1f4f8;border-radius:7px;width:30px;height:30px;color:#607087;font-size:18px}
+.modal-body{padding:22px}.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.modal-actions{display:flex;justify-content:flex-end;gap:9px;padding:0 22px 22px}
+.mobile-overlay{display:none}
+@media(max-width:1100px){.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-grid{grid-template-columns:1fr}.module-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){
+ .login-screen{grid-template-columns:1fr}.login-brand{display:none}.login-panel{min-height:100vh;padding:28px 22px}
+ .sidebar{transform:translateX(-100%);width:260px}.sidebar.open{transform:translateX(0)}.mobile-overlay.show{display:block;position:fixed;inset:0;background:#07162b80;z-index:15}
+ .main{margin-left:0}.topbar{height:64px;padding:0 16px}.hamburger{display:block}.breadcrumb{font-size:10px}.search-box{display:none}.top-user .user-copy{display:none}
+ .content{padding:22px 15px 30px}.page-head{flex-direction:column;align-items:stretch}.page-head h1{font-size:23px}.head-actions{justify-content:flex-start}
+ .metric-grid{gap:10px}.metric-card{padding:14px}.metric-value{font-size:25px}.metric-label{font-size:10px}
+ .bottom-grid{grid-template-columns:1fr}.module-cards{grid-template-columns:1fr}.modal-grid{grid-template-columns:1fr}
+ .topbar-right{gap:8px}.top-user .avatar{height:31px;width:31px}
+}
+@media(max-width:400px){.metric-grid{grid-template-columns:1fr 1fr}.metric-value{font-size:22px}.head-actions button{flex:1}.topbar{gap:8px}.topbar-right{gap:4px}}
 
+  .payroll-excluded { background:#fff1f2 !important; }
+  .payroll-approved { background:#f0fdf4 !important; }
+  .authorisation-cell { min-width:230px; }
+  .authorisation-cell button { margin:2px 2px 2px 0; font-size:11px; padding:7px 9px; }
+  .auth-reject { color:#991b1b!important; border-color:#fecaca!important; }
+  .auth-approve { color:#166534!important; border-color:#bbf7d0!important; }
+  .authorisation-cell button:disabled { opacity:.5; cursor:not-allowed; }
+</style>
+
+<style>
+@media print {
+  body.print-salary-certificate * { visibility: hidden !important; }
+  body.print-salary-certificate #salaryCertificate,
+  body.print-salary-certificate #salaryCertificate * { visibility: visible !important; }
+  body.print-salary-certificate #salaryCertificate { display:block !important; position:absolute; left:0; top:0; width:100%; margin:0!important; border:0!important; box-shadow:none!important; }
+  body.print-salary-certificate #salaryCertificate .head-actions { display:none!important; }
+  body.print-salary-certificate #salaryCertificate .panel-head { border-bottom:2px solid #174574; }
+  body.print-salary-certificate #salaryCertificate table { width:100%; border-collapse:collapse; }
+  body.print-salary-certificate #salaryCertificate th, body.print-salary-certificate #salaryCertificate td { border:1px solid #cbd5e1; padding:8px; text-align:left; }
+}
+</style>
+
+</head>
+<body>
+<div id="loginScreen" class="login-screen">
+  <section class="login-brand">
+    <div class="brand-lockup"><div class="brand-mark">A</div><div><div class="brand-name">AUDITPRO</div><div class="brand-sub">AUDIT MANAGEMENT SYSTEM</div></div></div>
+    <div class="brand-copy">
+      <div class="eyebrow">Governance · Assurance · Accountability</div>
+      <h1>Clarity and control for every audit.</h1>
+      <p>A unified workspace to plan audits, assess risk, track findings and strengthen compliance across your organisation.</p>
+    </div>
+    <div class="trust-row"><span><i class="gold-dot"></i> Audit oversight</span><span><i class="gold-dot"></i> Risk intelligence</span><span><i class="gold-dot"></i> Compliance tracking</span></div>
+  </section>
+  <section class="login-panel">
+    <div class="login-card">
+      <div class="brand-lockup" style="margin-bottom:34px"><div class="brand-mark">A</div><div><div class="brand-name" style="color:var(--navy)">AUDITPRO</div><div class="brand-sub" style="color:#8793a5">AUDIT MANAGEMENT SYSTEM</div></div></div>
+      <h2>Welcome back</h2><p class="intro">Sign in to access your audit workspace and oversight dashboard.</p>
+      <form id="loginForm">
+        <div class="field"><label for="email">WORK EMAIL</label><input id="email" type="email" autocomplete="username" placeholder="name@organisation.gov" required></div>
+        <div class="field"><label for="password">PASSWORD</label><div class="input-wrap"><input class="with-toggle" id="password" type="password" autocomplete="current-password" placeholder="Enter your password" required minlength="4"><button class="show-pass" type="button" id="togglePassword">SHOW</button></div></div>
+        <div class="login-options"><label class="check-label"><input type="checkbox" id="remember"> Remember this device</label><button type="button" class="link-btn" id="forgotBtn">Forgot password?</button></div>
+        <div id="loginError" class="login-error hidden" role="alert"></div>
+        <button class="primary-btn full" type="submit">Sign in securely &nbsp; →</button>
+      </form>
+      <div class="demo-hint"><strong>UI demonstration:</strong> enter any valid email and a password of at least 4 characters. This prototype does not authenticate against a real identity provider.</div>
+      <div class="login-note">Protected workspace · Use your organisation-issued credentials<br>© 2026 AuditPro. All rights reserved.</div>
+    </div>
+  </section>
+</div>
+
+<div id="app" class="app hidden">
+  <div id="mobileOverlay" class="mobile-overlay"></div>
+  <aside id="sidebar" class="sidebar">
+    <div class="brand-lockup"><div class="brand-mark">A</div><div><div class="brand-name">AUDITPRO</div><div class="brand-sub">AUDIT MANAGEMENT</div></div></div>
+    <div class="nav-caption">Workspace</div>
+    <nav class="nav-list" id="mainNav">
+      <button class="nav-item active" data-page="dashboard"><span class="nav-icon">▦</span> Dashboard</button>
+      <button class="nav-item" data-page="planning"><span class="nav-icon">◷</span> Audit Planning</button>
+      <button class="nav-item" data-page="schedule"><span class="nav-icon">▦</span> Audit Schedule <span class="nav-count">4</span></button>
+      <button class="nav-item" data-page="reports"><span class="nav-icon">▤</span> Audit Reports</button>
+      <button class="nav-item" data-page="findings"><span class="nav-icon">⚑</span> Findings & Recommendations <span class="nav-count">7</span></button>
+      <button class="nav-item" data-page="salary"><span class="nav-icon">₦</span> Salary Vetting</button>
+      <button class="nav-item" data-page="risk"><span class="nav-icon">◇</span> Risk Assessment</button>
+      <button class="nav-item" data-page="compliance"><span class="nav-icon">✓</span> Compliance Tracking</button>
+      <button class="nav-item" data-page="analytics"><span class="nav-icon">▥</span> Analytics & Statistics</button>
+    </nav>
+    <div class="nav-caption">Administration</div>
+    <nav class="nav-list"><button class="nav-item" data-page="users"><span class="nav-icon">♙</span> User Management</button></nav>
+    <div class="sidebar-bottom">
+      <div class="help-card"><strong>Need assistance?</strong><p>Visit the support centre for help with your audit workspace.</p><button id="supportBtn">CONTACT SUPPORT →</button></div>
+      <div class="profile-mini"><div class="avatar">AU</div><div><strong id="sideUser">Audit User</strong><small>Audit Administrator</small></div><button class="logout" id="logoutBtn" title="Sign out" aria-label="Sign out">↪</button></div>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left"><button class="hamburger" id="menuBtn" aria-label="Open menu">☰</button><div class="breadcrumb">Workspace &nbsp;/&nbsp; <strong id="crumb">Dashboard</strong></div></div>
+      <div class="topbar-right">
+        <div class="search-box"><span>⌕</span><input id="globalSearch" type="search" placeholder="Search audits, reports..."></div>
+        <button class="icon-btn" id="notificationsBtn" aria-label="Notifications">♧<i class="notification-dot"></i></button>
+        <div class="top-user"><div class="avatar">AU</div><div class="user-copy"><strong id="topUser">Audit User</strong><small>Audit Administrator</small></div></div>
+      </div>
+    </header>
+    <div class="content">
+      <section id="page-dashboard" class="page-section active">
+        <div class="page-head"><div><h1>Audit Overview</h1><p>Here’s what’s happening across your audit portfolio today.</p></div><div class="head-actions"><button class="secondary-btn" id="exportBtn">↓ &nbsp; Export overview</button><button class="gold-btn" id="newAuditBtn">＋ New audit</button></div></div>
+        <div class="filter-strip"><span class="filter-chip">Reporting period: <strong>FY 2026</strong> ▾</span><span class="filter-chip">All departments ▾</span><span class="filter-chip">Last updated: <strong>Today, 09:42 AM</strong></span></div>
+        <div class="metric-grid">
+          <div class="metric-card"><div class="metric-top"><span class="metric-label">Total audits</span><span class="metric-icon">▤</span></div><div class="metric-value" id="metricTotal">48</div><div class="metric-foot"><span class="trend-up">↑ 12%</span> compared with last period</div></div>
+          <div class="metric-card"><div class="metric-top"><span class="metric-label">In progress</span><span class="metric-icon">◷</span></div><div class="metric-value">16</div><div class="metric-foot"><span class="trend-warn">4 due this week</span> across 6 units</div></div>
+          <div class="metric-card"><div class="metric-top"><span class="metric-label">Completed audits</span><span class="metric-icon">✓</span></div><div class="metric-value">27</div><div class="metric-foot"><span class="trend-up">↑ 8%</span> completion rate improving</div></div>
+          <div class="metric-card"><div class="metric-top"><span class="metric-label">Open findings</span><span class="metric-icon">⚑</span></div><div class="metric-value" id="metricFindings">23</div><div class="metric-foot"><span class="trend-warn">7 high priority</span> require attention</div></div>
+        </div>
+        <div class="dashboard-grid">
+          <div class="panel"><div class="panel-head"><div><h3>Audit activity</h3><p>Planned and completed audits · Jan–Jun 2026</p></div><button class="panel-action" data-go="analytics">View analytics →</button></div><div class="chart-wrap"><div class="chart-legend"><span class="legend-item"><i class="legend-dot" style="background:#d9c58e"></i> Planned</span><span class="legend-item"><i class="legend-dot" style="background:#174574"></i> Completed</span></div><div class="bar-chart" aria-label="Audit activity bar chart"><div class="bar-group"><div class="bar planned" style="height:55%"></div><div class="bar completed" style="height:38%"></div><span class="bar-label">Jan</span></div><div class="bar-group"><div class="bar planned" style="height:72%"></div><div class="bar completed" style="height:48%"></div><span class="bar-label">Feb</span></div><div class="bar-group"><div class="bar planned" style="height:63%"></div><div class="bar completed" style="height:57%"></div><span class="bar-label">Mar</span></div><div class="bar-group"><div class="bar planned" style="height:84%"></div><div class="bar completed" style="height:67%"></div><span class="bar-label">Apr</span></div><div class="bar-group"><div class="bar planned" style="height:75%"></div><div class="bar completed" style="height:60%"></div><span class="bar-label">May</span></div><div class="bar-group"><div class="bar planned" style="height:92%"></div><div class="bar completed" style="height:72%"></div><span class="bar-label">Jun</span></div></div><div class="chart-spacer"></div></div></div>
+          <div class="panel"><div class="panel-head"><div><h3>Risk exposure</h3><p>Current open audit risks by severity</p></div><button class="panel-action" data-go="risk">Review risks →</button></div><div class="risk-content"><div class="risk-row"><span>High risk</span><div class="track"><div class="fill high" style="width:32%"></div></div><strong>8</strong></div><div class="risk-row"><span>Medium risk</span><div class="track"><div class="fill medium" style="width:64%"></div></div><strong>16</strong></div><div class="risk-row"><span>Low risk</span><div class="track"><div class="fill low" style="width:48%"></div></div><strong>12</strong></div><div class="risk-note">⚠ &nbsp; <strong>Attention required:</strong> 8 high-risk items remain open. Review mitigation owners and target dates.</div></div></div>
+        </div>
+        <div class="panel activity-panel"><div class="panel-head"><div><h3>Recent audit activity</h3><p>Track audit assignments, status and priority</p></div><button class="panel-action" data-go="reports">View all audits →</button></div><div class="table-wrap"><table id="auditTable"><thead><tr><th>Audit / Reference</th><th>Department</th><th>Lead auditor</th><th>Due date</th><th>Priority</th><th>Status</th><th></th></tr></thead><tbody>
+          <tr><td><div class="audit-name">Procurement & Contract Review</div><div class="subline">AUD-2026-014</div></td><td>Procurement</td><td>O. Adeyemi</td><td>30 Oct 2026</td><td><span class="priority high">High</span></td><td><span class="status in-progress">In progress</span></td><td><button class="row-actions" aria-label="Audit actions">···</button></td></tr>
+          <tr><td><div class="audit-name">Revenue Assurance Audit</div><div class="subline">AUD-2026-012</div></td><td>Finance</td><td>M. Okafor</td><td>04 Nov 2026</td><td><span class="priority high">High</span></td><td><span class="status in-progress">In progress</span></td><td><button class="row-actions" aria-label="Audit actions">···</button></td></tr>
+          <tr><td><div class="audit-name">ICT General Controls</div><div class="subline">AUD-2026-011</div></td><td>Information Technology</td><td>A. Ibrahim</td><td>12 Nov 2026</td><td><span class="priority medium">Medium</span></td><td><span class="status pending">Pending</span></td><td><button class="row-actions" aria-label="Audit actions">···</button></td></tr>
+          <tr><td><div class="audit-name">Payroll & Staff Records</div><div class="subline">AUD-2026-009</div></td><td>Human Resources</td><td>N. Eze</td><td>18 Oct 2026</td><td><span class="priority medium">Medium</span></td><td><span class="status overdue">Overdue</span></td><td><button class="row-actions" aria-label="Audit actions">···</button></td></tr>
+          <tr><td><div class="audit-name">Fleet & Asset Verification</div><div class="subline">AUD-2026-007</div></td><td>Operations</td><td>T. Bello</td><td>21 Nov 2026</td><td><span class="priority low">Low</span></td><td><span class="status completed">Completed</span></td><td><button class="row-actions" aria-label="Audit actions">···</button></td></tr>
+        </tbody></table></div></div>
+        <div class="bottom-grid">
+          <div class="panel"><div class="panel-head"><div><h3>Upcoming schedule</h3><p>Key milestones and audit engagements</p></div><button class="panel-action" data-go="schedule">Full schedule →</button></div><div class="schedule-list">
+            <div class="schedule-item"><div class="date-box"><strong>26</strong><small>Oct</small></div><div class="schedule-copy"><strong>Opening meeting — Procurement Audit</strong><small>10:00 AM · Conference Room A</small></div><span class="schedule-tag">Meeting</span></div>
+            <div class="schedule-item"><div class="date-box"><strong>28</strong><small>Oct</small></div><div class="schedule-copy"><strong>Evidence review — Revenue Assurance</strong><small>02:00 PM · Finance Department</small></div><span class="schedule-tag">Review</span></div>
+            <div class="schedule-item"><div class="date-box"><strong>30</strong><small>Oct</small></div><div class="schedule-copy"><strong>Procurement audit fieldwork due</strong><small>End of day · Procurement</small></div><span class="schedule-tag">Deadline</span></div>
+          </div></div>
+          <div class="panel"><div class="panel-head"><div><h3>Compliance snapshot</h3><p>Policy and control adherence overview</p></div><button class="panel-action" data-go="compliance">View controls →</button></div><div class="compliance-score"><div class="donut"><div class="donut-inner"><strong>82%</strong><small>Compliant</small></div></div><div class="compliance-legend"><div class="legend-row"><span><i class="legend-dot" style="display:inline-block;background:#174574;margin-right:7px"></i>Compliant</span><strong>82%</strong></div><div class="legend-row"><span><i class="legend-dot" style="display:inline-block;background:#d9a43b;margin-right:7px"></i>Partially compliant</span><strong>12%</strong></div><div class="legend-row"><span><i class="legend-dot" style="display:inline-block;background:#e9edf4;margin-right:7px"></i>Non-compliant</span><strong>6%</strong></div></div></div></div>
+        </div>
+      </section>
+      <section id="page-planning" class="page-section"><div class="page-head"><div><h1>Audit Planning</h1><p>Build the annual audit plan, assign ownership and monitor engagement scope.</p></div><div class="head-actions"><button class="gold-btn" data-modal="audit">＋ Create audit plan</button></div></div><div class="metric-grid"><div class="metric-card"><div class="metric-label">Plan items</div><div class="metric-value">48</div><div class="metric-foot">Across all business units</div></div><div class="metric-card"><div class="metric-label">Approved plans</div><div class="metric-value">36</div><div class="metric-foot"><span class="trend-up">75%</span> approval rate</div></div><div class="metric-card"><div class="metric-label">Awaiting approval</div><div class="metric-value">8</div><div class="metric-foot">Require management review</div></div><div class="metric-card"><div class="metric-label">Unassigned</div><div class="metric-value">4</div><div class="metric-foot">Assign a lead auditor</div></div></div><div class="module-panel"><h3>Planning workflow</h3><p>Define the audit universe, assess inherent risk, prioritise engagements, assign resources and obtain approval before fieldwork. Use the action button to create a sample audit plan in this prototype.</p><button class="gold-btn" data-modal="audit">＋ Add audit plan</button></div><div class="module-cards"><div class="module-card"><div class="module-icon">◇</div><h4>Risk-based planning</h4><p>Prioritise audits based on risk score, business impact and previous findings.</p><button class="panel-action" data-go="risk">Open risk assessment →</button></div><div class="module-card"><div class="module-icon">♙</div><h4>Resource allocation</h4><p>Coordinate lead auditors, reviewers, departments and planned effort.</p><button class="panel-action" data-go="users">Manage users →</button></div><div class="module-card"><div class="module-icon">✓</div><h4>Plan approvals</h4><p>Track proposed, submitted, approved and returned plans.</p><button class="panel-action" data-go="reports">Review audit register →</button></div></div></section>
+      <section id="page-schedule" class="page-section"><div class="page-head"><div><h1>Audit Schedule</h1><p>Coordinate fieldwork, meetings, milestones and reporting deadlines.</p></div><div class="head-actions"><button class="gold-btn" data-modal="event">＋ Add schedule item</button></div></div><div class="panel"><div class="panel-head"><div><h3>Upcoming engagements</h3><p>October–November 2026</p></div><button class="secondary-btn" id="scheduleExport">Export schedule</button></div><div id="scheduleList" class="schedule-list"><div class="schedule-item"><div class="date-box"><strong>26</strong><small>Oct</small></div><div class="schedule-copy"><strong>Opening meeting — Procurement Audit</strong><small>10:00 AM · Conference Room A</small></div><span class="schedule-tag">Meeting</span></div><div class="schedule-item"><div class="date-box"><strong>28</strong><small>Oct</small></div><div class="schedule-copy"><strong>Evidence review — Revenue Assurance</strong><small>02:00 PM · Finance Department</small></div><span class="schedule-tag">Review</span></div><div class="schedule-item"><div class="date-box"><strong>30</strong><small>Oct</small></div><div class="schedule-copy"><strong>Procurement audit fieldwork due</strong><small>End of day · Procurement</small></div><span class="schedule-tag">Deadline</span></div><div class="schedule-item"><div class="date-box"><strong>04</strong><small>Nov</small></div><div class="schedule-copy"><strong>Revenue Assurance report draft</strong><small>11:00 AM · Internal Audit</small></div><span class="schedule-tag">Deliverable</span></div></div></div></section>
+      <section id="page-reports" class="page-section"><div class="page-head"><div><h1>Audit Reports</h1><p>Manage audit reports, evidence references and review status.</p></div><div class="head-actions"><button class="gold-btn" data-modal="report">＋ New report</button></div></div><div class="filter-strip"><span class="filter-chip">All report statuses ▾</span><span class="filter-chip">FY 2026 ▾</span></div><div class="panel"><div class="panel-head"><div><h3>Report register</h3><p>Sample report records for the prototype</p></div></div><div class="table-wrap"><table><thead><tr><th>Report title</th><th>Reference</th><th>Department</th><th>Submitted</th><th>Status</th><th></th></tr></thead><tbody id="reportRows"><tr><td><div class="audit-name">Fleet & Asset Verification</div></td><td>RPT-2026-007</td><td>Operations</td><td>18 Oct 2026</td><td><span class="status completed">Approved</span></td><td><button class="panel-action view-record">View</button></td></tr><tr><td><div class="audit-name">Procurement & Contract Review</div></td><td>RPT-2026-014</td><td>Procurement</td><td>—</td><td><span class="status in-progress">In preparation</span></td><td><button class="panel-action view-record">View</button></td></tr><tr><td><div class="audit-name">ICT General Controls</div></td><td>RPT-2026-011</td><td>Information Technology</td><td>—</td><td><span class="status pending">Pending review</span></td><td><button class="panel-action view-record">View</button></td></tr></tbody></table></div></div></section>
+      <section id="page-findings" class="page-section"><div class="page-head"><div><h1>Findings & Recommendations</h1><p>Record control gaps, assign corrective actions and monitor closure.</p></div><div class="head-actions"><button class="gold-btn" data-modal="finding">＋ Record finding</button></div></div><div class="metric-grid"><div class="metric-card"><div class="metric-label">Open findings</div><div class="metric-value" id="findingOpen">23</div><div class="metric-foot">Awaiting remediation</div></div><div class="metric-card"><div class="metric-label">High priority</div><div class="metric-value">7</div><div class="metric-foot"><span class="trend-warn">Management attention</span></div></div><div class="metric-card"><div class="metric-label">Overdue actions</div><div class="metric-value">5</div><div class="metric-foot">Target date exceeded</div></div><div class="metric-card"><div class="metric-label">Closed this quarter</div><div class="metric-value">14</div><div class="metric-foot"><span class="trend-up">↑ 18%</span> closure rate</div></div></div><div class="panel"><div class="panel-head"><div><h3>Findings register</h3><p>Track recommendations and responsible owners</p></div></div><div class="table-wrap"><table><thead><tr><th>Finding</th><th>Audit area</th><th>Owner</th><th>Priority</th><th>Target date</th><th>Status</th></tr></thead><tbody id="findingRows"><tr><td><div class="audit-name">Incomplete procurement documentation</div><div class="subline">FND-2026-031</div></td><td>Procurement</td><td>Procurement Manager</td><td><span class="priority high">High</span></td><td>30 Oct 2026</td><td><span class="status in-progress">Open</span></td></tr><tr><td><div class="audit-name">Access review evidence not retained</div><div class="subline">FND-2026-028</div></td><td>ICT Controls</td><td>ICT Manager</td><td><span class="priority high">High</span></td><td>05 Nov 2026</td><td><span class="status pending">In remediation</span></td></tr><tr><td><div class="audit-name">Asset register reconciliation gap</div><div class="subline">FND-2026-024</div></td><td>Operations</td><td>Asset Controller</td><td><span class="priority medium">Medium</span></td><td>15 Nov 2026</td><td><span class="status in-progress">Open</span></td></tr></tbody></table></div></div></section>
+      <section id="page-salary" class="page-section">
+        <div class="page-head"><div><h1>Salary Vetting</h1><p>Review payroll entries, verify salary calculations and record exceptions before approval.</p></div><div class="head-actions"><button class="secondary-btn" id="salaryExport">↓ Export register</button><button class="gold-btn" data-modal="salary">＋ New vetting record</button></div></div>
+        <div class="module-panel"><h3>Vetting control</h3><p>Confirm staff identity and payroll reference, compare gross pay and authorised deductions with approved records, check the calculated net pay, and document discrepancies for resolution. This prototype uses sample data only; salary figures must be validated against authorised payroll sources before any decision.</p></div>
+        <div class="metric-grid"><div class="metric-card"><div class="metric-top"><span class="metric-label">Records reviewed</span><span class="metric-icon">▤</span></div><div class="metric-value" id="salaryTotal">12</div><div class="metric-foot">Current sample register</div></div><div class="metric-card"><div class="metric-top"><span class="metric-label">Awaiting review</span><span class="metric-icon">◷</span></div><div class="metric-value" id="salaryPending">4</div><div class="metric-foot"><span class="trend-warn">Requires vetting</span></div></div><div class="metric-card"><div class="metric-top"><span class="metric-label">Exceptions flagged</span><span class="metric-icon">⚑</span></div><div class="metric-value" id="salaryExceptions">2</div><div class="metric-foot">Review and resolve discrepancies</div></div><div class="metric-card"><div class="metric-top"><span class="metric-label">Vetted / cleared</span><span class="metric-icon">✓</span></div><div class="metric-value" id="salaryCleared">6</div><div class="metric-foot"><span class="trend-up">Cleared in sample register</span></div></div></div>
+        <div class="filter-strip"><span class="filter-chip">Pay period: <strong>October 2026</strong> ▾</span><span class="filter-chip">Review status: <strong>All</strong> ▾</span><span class="filter-chip">Amounts shown in <strong>NGN (₦)</strong></span></div>
+        <div class="panel"><div class="panel-head"><div><h3>Salary vetting register</h3><p>Staff payroll review, net-pay calculation and exception tracking</p></div></div><div class="table-wrap"><table id="salaryTable"><thead><tr><th>Staff / Payroll Ref.</th><th>Department</th><th>Pay period</th><th>Gross salary</th><th>Deductions</th><th>Calculated net</th><th>Vetting status</th><th>Notes / exception</th></tr></thead><tbody id="salaryRows"><tr><td><div class="audit-name">STF-00418 · Sample Staff A</div><div class="subline">PAY-2026-10-0418</div></td><td>Finance</td><td>Oct 2026</td><td>₦450,000.00</td><td>₦82,500.00</td><td>₦367,500.00</td><td><span class="status completed">Cleared</span></td><td>Matched approved payroll</td></tr><tr><td><div class="audit-name">STF-00273 · Sample Staff B</div><div class="subline">PAY-2026-10-0273</div></td><td>Operations</td><td>Oct 2026</td><td>₦385,000.00</td><td>₦61,000.00</td><td>₦324,000.00</td><td><span class="status pending">Pending review</span></td><td>Confirm deduction schedule</td></tr><tr><td><div class="audit-name">STF-00602 · Sample Staff C</div><div class="subline">PAY-2026-10-0602</div></td><td>Human Resources</td><td>Oct 2026</td><td>₦520,000.00</td><td>₦95,000.00</td><td>₦425,000.00</td><td><span class="status overdue">Exception</span></td><td>Gross pay differs from reference</td></tr></tbody></table></div></div>
+        <div class="panel" style="margin-top:20px"><div class="panel-head"><div><h3>Month-on-month payroll variance review</h3><p>Compare the previous payroll with the current payroll and identify every change that requires investigation.</p></div><button class="secondary-btn" id="varianceExport">↓ Export variance report</button></div>
+          <div class="module-panel" style="margin:0 0 16px"><h3>Issues to resolve during vetting</h3><p>Check salary and deduction variations; identify duplicate staff or payroll entries; identify staff present last month but missing this month (possible exits, suspension, leave, or omission); identify new additions; and confirm unchanged records. Each difference should have an explanation, supporting evidence, an assigned action, and a resolution status before payroll clearance.</p></div>
+          <div class="module-panel" style="margin:0 0 16px;border-left:4px solid #b45309"><h3>Authorisation decision — mandatory payroll control</h3><p><strong>Only entries supported by proper authorisation may be approved for payment.</strong> Where a salary, allowance, deduction adjustment, new appointment or other payroll entry lacks valid approval, mark it <strong>Rejected — Excluded from payroll</strong> so it is removed from the payable payroll total. Properly authorised and verified entries may be marked <strong>Approved for payroll</strong>. Do not permanently delete rejected entries: retain them in the audit trail with the reason, reviewer, date and evidence reference. A rejected entry must not be counted in approved totals; any removal or final approval must be completed by an authorised officer.</p></div>
+          <div class="module-panel" style="margin:0 0 16px;border-left:4px solid #174574"><h3>Three-stage salary audit approval workflow</h3><ol style="padding-left:22px;margin:8px 0"><li><strong>Auditor / Payroller:</strong> uploads the monthly payroll and submits each line item with its source payroll reference.</li><li><strong>Vetter:</strong> independently checks staff details, authorisation, month-on-month variations and supporting evidence; may return or disapprove an item.</li><li><strong>Super Admin:</strong> performs final approval after the auditor and vetter stages are complete.</li></ol><p><strong>Disapproval/removal rule:</strong> an item disapproved at any stage is marked rejected and excluded from the payable payroll totals. It is not permanently deleted; its line-item reference, reason, decision stage and audit history remain available for investigation and reporting. Only the Super Admin can give final payroll approval in this prototype.</p><p><strong>Variation references:</strong> each identified difference is a separate traceable line item for evidence, follow-up, export and certificate reporting.</p></div>
+          <div class="filter-strip" style="align-items:end;gap:14px;flex-wrap:wrap"><div class="field" style="min-width:160px;margin:0"><label for="previousPayMonth">PREVIOUS PAYROLL MONTH</label><select id="previousPayMonth"><option>Sep 2026</option><option>Aug 2026</option><option>Jul 2026</option></select></div><div class="field" style="min-width:160px;margin:0"><label for="currentPayMonth">CURRENT PAYROLL MONTH</label><select id="currentPayMonth"><option>Oct 2026</option><option>Sep 2026</option><option>Aug 2026</option></select></div><button class="gold-btn" id="runVariance">Run comparison</button><span class="subline">Sample comparison data — connect/import authorised monthly payroll files for actual results.</span></div>
+          <div class="metric-grid" style="margin-top:16px"><div class="metric-card"><div class="metric-label">Salary variations</div><div class="metric-value" id="varianceCount">2</div><div class="metric-foot">Gross, deductions or net pay changed</div></div><div class="metric-card"><div class="metric-label">Possible duplicates</div><div class="metric-value" id="duplicateCount">1</div><div class="metric-foot">Repeated staff/payroll identity</div></div><div class="metric-card"><div class="metric-label">Missing / possible exits</div><div class="metric-value" id="exitCount">1</div><div class="metric-foot">Present previously, absent currently</div></div><div class="metric-card"><div class="metric-label">New additions</div><div class="metric-value" id="additionCount">1</div><div class="metric-foot">Present currently, absent previously</div></div></div>
+          <div class="metric-grid" style="margin-top:12px"><div class="metric-card"><div class="metric-label">Approved line items</div><div class="metric-value" id="approvedLineCount">0</div><div class="metric-foot">Completed all three approval stages</div></div><div class="metric-card"><div class="metric-label">Rejected / excluded</div><div class="metric-value" id="excludedLineCount">0</div><div class="metric-foot">Excluded from payable totals; retained for audit</div></div><div class="metric-card"><div class="metric-label">Awaiting decision</div><div class="metric-value" id="awaitingLineCount">6</div><div class="metric-foot">Not yet approved or rejected</div></div><div class="metric-card"><div class="metric-label">Line-item references</div><div class="metric-value" id="lineReferenceCount">6</div><div class="metric-foot">Traceable references for follow-up and export</div></div></div>
+          <div class="filter-strip"><label for="varianceFilter" class="subline">Show issue type:</label><select id="varianceFilter"><option value="all">All differences</option><option value="Variation">Salary variation</option><option value="Duplicate">Possible duplicate</option><option value="Exit / missing">Exit / missing</option><option value="New addition">New addition</option><option value="No change">No change</option></select></div>
+          <div class="table-wrap"><table id="varianceTable"><thead><tr><th>Staff / Payroll Ref.</th><th>Previous month</th><th>Current month</th><th>Difference / issue</th><th>Classification</th><th>Required action</th><th>Resolution status</th><th>Three-stage approval / decision</th></tr></thead><tbody id="varianceRows">
+          <tr data-issue="Variation" data-line-ref="VAR-2026-001" data-stage="0"><td><div class="audit-name">STF-00418 · Sample Staff A</div><div class="subline">PAY-2026-0418</div><div class="subline">Line item: VAR-2026-001</div></td><td>Gross ₦430,000 · Net ₦350,000</td><td>Gross ₦450,000 · Net ₦367,500</td><td>Gross +₦20,000; net +₦17,500</td><td><span class="status pending">Salary variation</span></td><td>Verify promotion, increment or approved adjustment.</td><td><span class="status pending">Pending review</span></td><td class="authorisation-cell"><div class="subline stage-status">Stage 1: Awaiting auditor submission</div><div class="subline stage-vetter">Stage 2: Locked</div><div class="subline stage-admin">Stage 3: Locked</div><div class="stage-actions" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"><button class="secondary-btn stage-action" data-stage-action="auditor" type="button">1. Auditor submits</button><button class="secondary-btn stage-action" data-stage-action="vetter" type="button" disabled>2. Vetter verifies</button><button class="secondary-btn stage-action" data-stage-action="admin" type="button" disabled>3. Super Admin approves</button><button class="secondary-btn auth-reject" type="button">Disapprove &amp; exclude</button></div><div class="subline auth-decision" style="margin-top:6px">No final decision recorded</div><div class="subline" style="margin-top:4px">Decision history: <span class="decision-history">None</span></div></td></tr>
+          <tr data-issue="Variation" data-line-ref="VAR-2026-002" data-stage="0"><td><div class="audit-name">STF-00273 · Sample Staff B</div><div class="subline">PAY-2026-0273</div><div class="subline">Line item: VAR-2026-002</div></td><td>Deductions ₦45,000</td><td>Deductions ₦61,000</td><td>Deductions increased by ₦16,000</td><td><span class="status pending">Salary variation</span></td><td>Reconcile deductions against approved schedules and recoveries.</td><td><span class="status pending">Pending review</span></td><td class="authorisation-cell"><div class="subline stage-status">Stage 1: Awaiting auditor submission</div><div class="subline stage-vetter">Stage 2: Locked</div><div class="subline stage-admin">Stage 3: Locked</div><div class="stage-actions" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"><button class="secondary-btn stage-action" data-stage-action="auditor" type="button">1. Auditor submits</button><button class="secondary-btn stage-action" data-stage-action="vetter" type="button" disabled>2. Vetter verifies</button><button class="secondary-btn stage-action" data-stage-action="admin" type="button" disabled>3. Super Admin approves</button><button class="secondary-btn auth-reject" type="button">Disapprove &amp; exclude</button></div><div class="subline auth-decision" style="margin-top:6px">No final decision recorded</div><div class="subline" style="margin-top:4px">Decision history: <span class="decision-history">None</span></div></td></tr>
+          <tr data-issue="Duplicate" data-line-ref="VAR-2026-003" data-stage="0"><td><div class="audit-name">STF-00602 · Sample Staff C</div><div class="subline">Two current-month entries detected</div><div class="subline">Line item: VAR-2026-003</div></td><td>One record</td><td>Two matching identity/payroll records</td><td>Potential duplicate payment entry</td><td><span class="status overdue">Possible duplicate</span></td><td>Check staff ID, bank/account details and payroll reference; hold for authorised review.</td><td><span class="status overdue">Exception</span></td><td class="authorisation-cell"><div class="subline stage-status">Stage 1: Awaiting auditor submission</div><div class="subline stage-vetter">Stage 2: Locked</div><div class="subline stage-admin">Stage 3: Locked</div><div class="stage-actions" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"><button class="secondary-btn stage-action" data-stage-action="auditor" type="button">1. Auditor submits</button><button class="secondary-btn stage-action" data-stage-action="vetter" type="button" disabled>2. Vetter verifies</button><button class="secondary-btn stage-action" data-stage-action="admin" type="button" disabled>3. Super Admin approves</button><button class="secondary-btn auth-reject" type="button">Disapprove &amp; exclude</button></div><div class="subline auth-decision" style="margin-top:6px">No final decision recorded</div><div class="subline" style="margin-top:4px">Decision history: <span class="decision-history">None</span></div></td></tr>
+          <tr data-issue="Exit / missing" data-line-ref="VAR-2026-004" data-stage="0"><td><div class="audit-name">STF-00311 · Sample Staff D</div><div class="subline">PAY-2026-0311</div><div class="subline">Line item: VAR-2026-004</div></td><td>Present in Sep 2026</td><td>No matching record</td><td>Staff record missing from current payroll</td><td><span class="status overdue">Exit / missing</span></td><td>Confirm exit, retirement, suspension, transfer or payroll omission with HR.</td><td><span class="status pending">Pending confirmation</span></td><td class="authorisation-cell"><div class="subline stage-status">Stage 1: Awaiting auditor submission</div><div class="subline stage-vetter">Stage 2: Locked</div><div class="subline stage-admin">Stage 3: Locked</div><div class="stage-actions" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"><button class="secondary-btn stage-action" data-stage-action="auditor" type="button">1. Auditor submits</button><button class="secondary-btn stage-action" data-stage-action="vetter" type="button" disabled>2. Vetter verifies</button><button class="secondary-btn stage-action" data-stage-action="admin" type="button" disabled>3. Super Admin approves</button><button class="secondary-btn auth-reject" type="button">Disapprove &amp; exclude</button></div><div class="subline auth-decision" style="margin-top:6px">No final decision recorded</div><div class="subline" style="margin-top:4px">Decision history: <span class="decision-history">None</span></div></td></tr>
+          <tr data-issue="New addition" data-line-ref="VAR-2026-005" data-stage="0"><td><div class="audit-name">STF-00725 · Sample Staff E</div><div class="subline">PAY-2026-0725</div><div class="subline">Line item: VAR-2026-005</div></td><td>No matching record</td><td>New current-month entry</td><td>New payroll addition</td><td><span class="status in-progress">New addition</span></td><td>Verify appointment, assumption of duty, approved salary and effective date.</td><td><span class="status pending">Pending verification</span></td><td class="authorisation-cell"><div class="subline stage-status">Stage 1: Awaiting auditor submission</div><div class="subline stage-vetter">Stage 2: Locked</div><div class="subline stage-admin">Stage 3: Locked</div><div class="stage-actions" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"><button class="secondary-btn stage-action" data-stage-action="auditor" type="button">1. Auditor submits</button><button class="secondary-btn stage-action" data-stage-action="vetter" type="button" disabled>2. Vetter verifies</button><button class="secondary-btn stage-action" data-stage-action="admin" type="button" disabled>3. Super Admin approves</button><button class="secondary-btn auth-reject" type="button">Disapprove &amp; exclude</button></div><div class="subline auth-decision" style="margin-top:6px">No final decision recorded</div><div class="subline" style="margin-top:4px">Decision history: <span class="decision-history">None</span></div></td></tr>
+          <tr data-issue="No change" data-line-ref="VAR-2026-006" data-stage="0"><td><div class="audit-name">STF-00540 · Sample Staff F</div><div class="subline">PAY-2026-0540</div><div class="subline">Line item: VAR-2026-006</div></td><td>Gross ₦410,000 · Net ₦332,000</td><td>Gross ₦410,000 · Net ₦332,000</td><td>No variance identified</td><td><span class="status completed">No change</span></td><td>Retain comparison evidence and clear if all other checks pass.</td><td><span class="status completed">Matched</span></td><td class="authorisation-cell"><div class="subline stage-status">Stage 1: Awaiting auditor submission</div><div class="subline stage-vetter">Stage 2: Locked</div><div class="subline stage-admin">Stage 3: Locked</div><div class="stage-actions" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"><button class="secondary-btn stage-action" data-stage-action="auditor" type="button">1. Auditor submits</button><button class="secondary-btn stage-action" data-stage-action="vetter" type="button" disabled>2. Vetter verifies</button><button class="secondary-btn stage-action" data-stage-action="admin" type="button" disabled>3. Super Admin approves</button><button class="secondary-btn auth-reject" type="button">Disapprove &amp; exclude</button></div><div class="subline auth-decision" style="margin-top:6px">No final decision recorded</div><div class="subline" style="margin-top:4px">Decision history: <span class="decision-history">None</span></div></td></tr>
+          </tbody></table></div><p class="subline" style="margin-top:12px">Important: a missing record is not automatically an exit, and a repeated record is not automatically fraud. Confirm each exception against HR, approved establishment changes and authorised payroll evidence before taking action.</p>
+
+          <div class="panel" id="payrollAnalyticsPanel" style="margin-top:20px"><div class="panel-head"><div><h3>Payroll financial analysis & audit certificate</h3><p>Enter verified month totals to quantify payroll changes and prepare a presentable vetting certificate.</p></div><button class="secondary-btn" id="generateSalaryCertificate">Generate audit certificate</button></div>
+            <div class="module-panel" style="margin:0 0 16px"><strong>Important:</strong> These are aggregate control totals, not a substitute for employee-level reconciliation. Enter figures from the authorised payroll summaries after the variance issues have been investigated.</div>
+            <div class="filter-strip" style="align-items:end;gap:12px;flex-wrap:wrap">
+              <div class="field" style="min-width:145px;margin:0;flex:1"><label for="prevStaffStrength">PREVIOUS STAFF STRENGTH</label><input id="prevStaffStrength" type="number" min="0" step="1" value="1200"></div>
+              <div class="field" style="min-width:145px;margin:0;flex:1"><label for="currStaffStrength">CURRENT STAFF STRENGTH</label><input id="currStaffStrength" type="number" min="0" step="1" value="1205"></div>
+              <div class="field" style="min-width:170px;margin:0;flex:1"><label for="prevBasicSalary">PREVIOUS BASIC SALARY (₦)</label><input id="prevBasicSalary" type="number" min="0" step="0.01" value="185000000"></div>
+              <div class="field" style="min-width:170px;margin:0;flex:1"><label for="currBasicSalary">CURRENT BASIC SALARY (₦)</label><input id="currBasicSalary" type="number" min="0" step="0.01" value="189500000"></div>
+              <div class="field" style="min-width:170px;margin:0;flex:1"><label for="prevAllowances">PREVIOUS TOTAL ALLOWANCES (₦)</label><input id="prevAllowances" type="number" min="0" step="0.01" value="74000000"></div>
+              <div class="field" style="min-width:170px;margin:0;flex:1"><label for="currAllowances">CURRENT TOTAL ALLOWANCES (₦)</label><input id="currAllowances" type="number" min="0" step="0.01" value="76800000"></div>
+              <div class="field" style="min-width:170px;margin:0;flex:1"><label for="prevDeductions">PREVIOUS DEDUCTIONS (₦)</label><input id="prevDeductions" type="number" min="0" step="0.01" value="22500000"></div>
+              <div class="field" style="min-width:170px;margin:0;flex:1"><label for="currDeductions">CURRENT DEDUCTIONS (₦)</label><input id="currDeductions" type="number" min="0" step="0.01" value="23100000"></div>
+              <div class="field" style="min-width:170px;margin:0;flex:1"><label for="prevApprovedTotal">PREVIOUS APPROVED PAYROLL (₦)</label><input id="prevApprovedTotal" type="number" min="0" step="0.01" value="236500000"></div>
+              <div class="field" style="min-width:170px;margin:0;flex:1"><label for="currApprovedTotal">CURRENT APPROVED PAYROLL (₦)</label><input id="currApprovedTotal" type="number" min="0" step="0.01" value="243200000"></div>
+              <button class="gold-btn" id="calculatePayrollAnalytics">Calculate variations</button>
+            </div>
+            <div class="metric-grid" style="margin-top:16px"><div class="metric-card"><div class="metric-label">Approved payroll variation</div><div class="metric-value" id="approvedVariation">₦6,700,000</div><div class="metric-foot" id="approvedVariationPct">+2.83% month-on-month</div></div><div class="metric-card"><div class="metric-label">Basic salary variation</div><div class="metric-value" id="basicVariation">₦4,500,000</div><div class="metric-foot" id="basicVariationPct">+2.43% month-on-month</div></div><div class="metric-card"><div class="metric-label">Allowance variation</div><div class="metric-value" id="allowanceVariation">₦2,800,000</div><div class="metric-foot" id="allowanceVariationPct">+3.78% month-on-month</div></div><div class="metric-card"><div class="metric-label">Staff strength variation</div><div class="metric-value" id="staffVariation">+5</div><div class="metric-foot" id="staffVariationPct">+0.42% month-on-month</div></div></div>
+            <div class="panel" style="margin-top:16px"><div class="panel-head"><div><h3>Variation analysis</h3><p>Current month compared with previous month</p></div></div><div id="payrollVariationChart" class="risk-content"><div class="risk-row"><span>Approved payroll</span><div class="track"><div class="fill medium" id="approvedBar" style="width:65%"></div></div><strong id="approvedBarLabel">+2.83%</strong></div><div class="risk-row"><span>Basic salary</span><div class="track"><div class="fill low" id="basicBar" style="width:56%"></div></div><strong id="basicBarLabel">+2.43%</strong></div><div class="risk-row"><span>Allowances</span><div class="track"><div class="fill medium" id="allowanceBar" style="width:70%"></div></div><strong id="allowanceBarLabel">+3.78%</strong></div><div class="risk-row"><span>Deductions</span><div class="track"><div class="fill low" id="deductionsBar" style="width:27%"></div></div><strong id="deductionsBarLabel">+2.67%</strong></div><p class="subline" id="payrollAnalysisNote" style="margin-top:10px">Illustrative values only. Verify all variations against approved payroll schedules and supporting documents.</p></div></div>
+            <div id="salaryCertificate" class="panel" style="margin-top:16px;display:none"><div class="panel-head"><div><h3>Salary Vetting Audit Certificate</h3><p id="certificateSubtitle">Monthly payroll certification</p></div><span class="status pending" id="certificateStatus">Pending final clearance</span></div><div id="certificateBody"></div><div class="head-actions" style="padding:0 20px 20px"><button class="secondary-btn" id="printSalaryCertificate">Print / Save as PDF</button></div></div>
+          </div>
+        </div>
+      </section>
+      <section id="page-risk" class="page-section"><div class="page-head"><div><h1>Risk Assessment</h1><p>Identify, score and monitor risks that influence audit priorities.</p></div><div class="head-actions"><button class="gold-btn" data-modal="risk">＋ Add risk</button></div></div><div class="metric-grid"><div class="metric-card"><div class="metric-label">Risks identified</div><div class="metric-value">36</div><div class="metric-foot">Across current audit universe</div></div><div class="metric-card"><div class="metric-label">High exposure</div><div class="metric-value">8</div><div class="metric-foot"><span class="trend-warn">Review mitigation plans</span></div></div><div class="metric-card"><div class="metric-label">Mitigations in progress</div><div class="metric-value">19</div><div class="metric-foot">Assigned to risk owners</div></div><div class="metric-card"><div class="metric-label">Accepted residual risk</div><div class="metric-value">4</div><div class="metric-foot">Requires documented approval</div></div></div><div class="dashboard-grid"><div class="panel"><div class="panel-head"><div><h3>Risk distribution</h3><p>Current exposure by severity</p></div></div><div class="risk-content"><div class="risk-row"><span>High</span><div class="track"><div class="fill high" style="width:32%"></div></div><strong>8</strong></div><div class="risk-row"><span>Medium</span><div class="track"><div class="fill medium" style="width:64%"></div></div><strong>16</strong></div><div class="risk-row"><span>Low</span><div class="track"><div class="fill low" style="width:48%"></div></div><strong>12</strong></div></div></div><div class="panel"><div class="panel-head"><div><h3>Risk scoring guide</h3><p>Illustrative likelihood × impact approach</p></div></div><div class="risk-content"><p style="font-size:11px;line-height:1.8;color:#65738a">Score each risk using the organisation’s approved methodology. Document the cause, potential consequence, existing controls, residual score, treatment plan, owner and review date.</p><div class="risk-note">Use your approved enterprise risk framework before relying on scores for formal decisions.</div></div></div></div></section>
+      <section id="page-compliance" class="page-section"><div class="page-head"><div><h1>Compliance Tracking</h1><p>Monitor policies, control testing and corrective actions.</p></div><div class="head-actions"><button class="gold-btn" data-modal="compliance">＋ Add control</button></div></div><div class="metric-grid"><div class="metric-card"><div class="metric-label">Overall compliance</div><div class="metric-value">82%</div><div class="metric-foot">Across tracked controls</div></div><div class="metric-card"><div class="metric-label">Compliant controls</div><div class="metric-value">82</div><div class="metric-foot">Of 100 sample controls</div></div><div class="metric-card"><div class="metric-label">Partially compliant</div><div class="metric-value">12</div><div class="metric-foot">Action plans required</div></div><div class="metric-card"><div class="metric-label">Non-compliant</div><div class="metric-value">6</div><div class="metric-foot"><span class="trend-warn">Remediation needed</span></div></div></div><div class="panel"><div class="panel-head"><div><h3>Control compliance register</h3><p>Illustrative controls — align with your approved policy register</p></div></div><div class="table-wrap"><table><thead><tr><th>Control / Requirement</th><th>Control owner</th><th>Last reviewed</th><th>Next review</th><th>Status</th></tr></thead><tbody><tr><td><div class="audit-name">Procurement approval controls</div></td><td>Procurement</td><td>01 Oct 2026</td><td>01 Jan 2027</td><td><span class="status completed">Compliant</span></td></tr><tr><td><div class="audit-name">Privileged account review</div></td><td>ICT</td><td>15 Sep 2026</td><td>15 Dec 2026</td><td><span class="status pending">Partial</span></td></tr><tr><td><div class="audit-name">Asset verification evidence</div></td><td>Operations</td><td>12 Aug 2026</td><td>12 Nov 2026</td><td><span class="status overdue">Non-compliant</span></td></tr></tbody></table></div></div></section>
+      <section id="page-analytics" class="page-section"><div class="page-head"><div><h1>Analytics & Statistics</h1><p>Portfolio performance, audit delivery and issue trends.</p></div><div class="head-actions"><button class="secondary-btn" id="analyticsExport">↓ Export statistics</button></div></div><div class="metric-grid"><div class="metric-card"><div class="metric-label">Audit completion</div><div class="metric-value">56%</div><div class="metric-foot">27 of 48 audits completed</div></div><div class="metric-card"><div class="metric-label">On-time delivery</div><div class="metric-value">91%</div><div class="metric-foot">Against planned due dates</div></div><div class="metric-card"><div class="metric-label">Average finding age</div><div class="metric-value">21 days</div><div class="metric-foot">Open finding sample</div></div><div class="metric-card"><div class="metric-label">Compliance score</div><div class="metric-value">82%</div><div class="metric-foot">Tracked controls</div></div></div><div class="dashboard-grid"><div class="panel"><div class="panel-head"><div><h3>Audit delivery by month</h3><p>Illustrative FY 2026 sample data</p></div></div><div class="chart-wrap"><div class="bar-chart"><div class="bar-group"><div class="bar planned" style="height:55%"></div><div class="bar completed" style="height:38%"></div><span class="bar-label">Jan</span></div><div class="bar-group"><div class="bar planned" style="height:72%"></div><div class="bar completed" style="height:48%"></div><span class="bar-label">Feb</span></div><div class="bar-group"><div class="bar planned" style="height:63%"></div><div class="bar completed" style="height:57%"></div><span class="bar-label">Mar</span></div><div class="bar-group"><div class="bar planned" style="height:84%"></div><div class="bar completed" style="height:67%"></div><span class="bar-label">Apr</span></div><div class="bar-group"><div class="bar planned" style="height:75%"></div><div class="bar completed" style="height:60%"></div><span class="bar-label">May</span></div><div class="bar-group"><div class="bar planned" style="height:92%"></div><div class="bar completed" style="height:72%"></div><span class="bar-label">Jun</span></div></div><div class="chart-spacer"></div><div class="chart-legend"><span class="legend-item"><i class="legend-dot" style="background:#d9c58e"></i> Planned</span><span class="legend-item"><i class="legend-dot" style="background:#174574"></i> Completed</span></div></div></div><div class="panel"><div class="panel-head"><div><h3>Portfolio health</h3><p>Key oversight indicators</p></div></div><div class="risk-content"><div class="risk-row"><span>Completion</span><div class="track"><div class="fill low" style="width:56%"></div></div><strong>56%</strong></div><div class="risk-row"><span>On-time</span><div class="track"><div class="fill low" style="width:91%"></div></div><strong>91%</strong></div><div class="risk-row"><span>Compliance</span><div class="track"><div class="fill medium" style="width:82%"></div></div><strong>82%</strong></div></div></div></div><div class="module-panel"><h3>Data note</h3><p>All figures in this prototype are illustrative sample data. Connect the application to an approved data source and validate calculation rules before using the analytics for management reporting.</p></div></section>
+      <section id="page-users" class="page-section"><div class="page-head"><div><h1>User Management</h1><p>Manage access roles, audit assignments and user lifecycle.</p></div><div class="head-actions"><button class="gold-btn" data-modal="user">＋ Add user</button></div></div><div class="module-panel"><h3>Access governance</h3><p>Use role-based access control and least-privilege principles. A production deployment should integrate with the organisation’s identity provider, enforce multi-factor authentication, and retain auditable records of access changes.</p></div><div class="panel"><div class="panel-head"><div><h3>Users and roles</h3><p>Demo records for the prototype</p></div></div><div class="table-wrap"><table><thead><tr><th>User</th><th>Department</th><th>Role</th><th>Last active</th><th>Status</th></tr></thead><tbody id="userRows"><tr><td><div class="audit-name">A. Uvbiama</div><div class="subline">audit.admin@example.org</div></td><td>Internal Audit</td><td>Administrator</td><td>Today, 09:42 AM</td><td><span class="status completed">Active</span></td></tr><tr><td><div class="audit-name">O. Adeyemi</div><div class="subline">o.adeyemi@example.org</div></td><td>Procurement</td><td>Lead Auditor</td><td>Today, 08:17 AM</td><td><span class="status completed">Active</span></td></tr><tr><td><div class="audit-name">M. Okafor</div><div class="subline">m.okafor@example.org</div></td><td>Finance</td><td>Auditor</td><td>Yesterday</td><td><span class="status pending">Invited</span></td></tr></tbody></table></div></div></section>
+    </div>
+  </main>
+</div>
+<div id="modalRoot" class="hidden"></div>
+<div id="toastRoot" aria-live="polite"></div>
+<script>
+(() => {
+  const $ = (s, root=document) => root.querySelector(s);
+  const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+  const loginScreen = $('#loginScreen'), app = $('#app');
+  const loginError = $('#loginError');
+  let currentUser = 'Audit User';
+  let auditCount = 48, findingCount = 23;
+  const toast = (message) => {
+    const root = $('#toastRoot'); root.innerHTML = '';
+    const el = document.createElement('div'); el.className = 'toast'; el.textContent = message;
+    root.appendChild(el); window.setTimeout(() => el.remove(), 3200);
+  };
+  const showApp = (email) => {
+    currentUser = (email.split('@')[0] || 'Audit User').replace(/[._-]/g,' ').replace(/\b\w/g, c=>c.toUpperCase());
+    $('#topUser').textContent = currentUser; $('#sideUser').textContent = currentUser;
+    loginScreen.classList.add('hidden'); app.classList.remove('hidden');
+    navigate('dashboard');
+  };
+  $('#loginForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const email = $('#email').value.trim(), password = $('#password').value;
+    if (!email || !$('#email').checkValidity() || password.length < 4) {
+      loginError.textContent = 'Enter a valid email address and a password with at least 4 characters.';
+      loginError.classList.remove('hidden'); return;
+    }
+    loginError.classList.add('hidden');
+    showApp(email);
+    toast('Demo session started. This is not real authentication.');
+  });
+  $('#togglePassword').addEventListener('click', () => {
+    const input = $('#password'), reveal = input.type === 'password';
+    input.type = reveal ? 'text' : 'password'; $('#togglePassword').textContent = reveal ? 'HIDE' : 'SHOW';
+  });
+  $('#forgotBtn').addEventListener('click', () => toast('Password recovery must be connected to your organisation’s identity provider.'));
+  $('#logoutBtn').addEventListener('click', logout);
+  function logout() {
+    app.classList.add('hidden'); loginScreen.classList.remove('hidden');
+    $('#password').value=''; $('#loginError').classList.add('hidden');
+    $('#sidebar').classList.remove('open'); $('#mobileOverlay').classList.remove('show');
+  }
+  const labels = {dashboard:'Dashboard',planning:'Audit Planning',schedule:'Audit Schedule',reports:'Audit Reports',findings:'Findings & Recommendations',salary:'Salary Vetting',risk:'Risk Assessment',compliance:'Compliance Tracking',analytics:'Analytics & Statistics',users:'User Management'};
+  function navigate(page) {
+    if (!labels[page]) return;
+    $$('.page-section').forEach(el => el.classList.toggle('active', el.id === 'page-'+page));
+    $$('.nav-item[data-page]').forEach(el => el.classList.toggle('active', el.dataset.page === page));
+    $('#crumb').textContent = labels[page];
+    $('#sidebar').classList.remove('open'); $('#mobileOverlay').classList.remove('show');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  $('#mainNav').addEventListener('click', e => {
+    const btn = e.target.closest('[data-page]'); if (btn) navigate(btn.dataset.page);
+  });
+  document.addEventListener('click', e => {
+    const go = e.target.closest('[data-go]'); if (go) navigate(go.dataset.go);
+    const modalBtn = e.target.closest('[data-modal]'); if (modalBtn) openModal(modalBtn.dataset.modal);
+  });
+  $('#menuBtn').addEventListener('click', () => { $('#sidebar').classList.add('open'); $('#mobileOverlay').classList.add('show'); });
+  $('#mobileOverlay').addEventListener('click', () => { $('#sidebar').classList.remove('open'); $('#mobileOverlay').classList.remove('show'); });
+  $('#notificationsBtn').addEventListener('click', () => toast('You have 3 demo notifications: 2 upcoming deadlines and 1 finding requiring review.'));
+  $('#supportBtn').addEventListener('click', () => toast('Support: configure your organisation’s internal service desk contact.'));
+  $('#exportBtn').addEventListener('click', () => exportCSV('audit-overview.csv', [['Metric','Value'],['Total audits',auditCount],['In progress',16],['Completed audits',27],['Open findings',findingCount],['Compliance','82%']]));
+  $('#analyticsExport').addEventListener('click', () => exportCSV('audit-statistics.csv', [['Metric','Value'],['Total audits',auditCount],['Completed audits',27],['On-time delivery','91%'],['Average finding age','21 days'],['Compliance','82%']]));
+  $('#scheduleExport').addEventListener('click', () => exportCSV('audit-schedule.csv', [['Date','Activity','Time / Location'],['26 Oct 2026','Opening meeting — Procurement Audit','10:00 AM · Conference Room A'],['28 Oct 2026','Evidence review — Revenue Assurance','02:00 PM · Finance Department'],['30 Oct 2026','Procurement audit fieldwork due','End of day · Procurement'],['04 Nov 2026','Revenue Assurance report draft','11:00 AM · Internal Audit']]));
+  $('#salaryExport').addEventListener('click', () => { const rows=[['Staff ID / Name','Payroll Reference','Department','Pay Period','Gross Salary','Deductions','Calculated Net','Status','Notes']]; $$('#salaryRows tr').forEach(tr=>{ if(tr.style.display==='none')return; rows.push([...tr.children].slice(0,8).map(td=>td.innerText.trim().replace(/\s+/g,' '))); }); exportCSV('salary-vetting-register.csv', rows); });
+  const varianceFilter=$('#varianceFilter');
+  if(varianceFilter) varianceFilter.addEventListener('change',()=>{$$('#varianceRows tr').forEach(tr=>{tr.style.display=varianceFilter.value==='all'||tr.dataset.issue===varianceFilter.value?'':'none';});});
+  $('#runVariance')?.addEventListener('click',()=>{
+    const previous=$('#previousPayMonth').value,current=$('#currentPayMonth').value;
+    if(previous===current){toast('Choose two different months to compare.');return;}
+    const counts={Variation:0,Duplicate:0,'Exit / missing':0,'New addition':0,'No change':0};
+    $$('#varianceRows tr').forEach(tr=>{if(counts[tr.dataset.issue]!==undefined)counts[tr.dataset.issue]++;});
+    $('#varianceCount').textContent=counts.Variation;$('#duplicateCount').textContent=counts.Duplicate;$('#exitCount').textContent=counts['Exit / missing'];$('#additionCount').textContent=counts['New addition'];
+    $('#varianceTable').previousElementSibling?.querySelector('h3');
+    toast(`Demo comparison displayed for ${previous} and ${current}. Import both authorised payroll files for a real reconciliation.`);
+  });
+  // Three-stage approval workflow: Auditor upload -> Vetter review -> Super Admin approval.
+  // Disapproval at any stage excludes the item from payable totals while preserving its audit trail.
+  const refreshWorkflowCounts=()=>{
+    const rows=$$('#varianceRows tr');
+    const approved=rows.filter(r=>r.dataset.authorisationDecision==='approved').length;
+    const excluded=rows.filter(r=>r.dataset.authorisationDecision==='rejected').length;
+    $('#approvedLineCount').textContent=approved;
+    $('#excludedLineCount').textContent=excluded;
+    $('#awaitingLineCount').textContent=rows.length-approved-excluded;
+    $('#lineReferenceCount').textContent=rows.filter(r=>!!r.dataset.lineRef).length;
+  };
+  refreshWorkflowCounts();
+  $('#varianceRows')?.addEventListener('click',(event)=>{
+    const stageBtn=event.target.closest('.stage-action'), reject=event.target.closest('.auth-reject');
+    if(!stageBtn&&!reject)return;
+    const row=event.target.closest('tr'); if(!row)return;
+    const cell=row.querySelector('.authorisation-cell');
+    const decision=cell.querySelector('.auth-decision');
+    const history=cell.querySelector('.decision-history');
+    const stageStatus=cell.querySelector('.stage-status');
+    const vetterStatus=cell.querySelector('.stage-vetter');
+    const adminStatus=cell.querySelector('.stage-admin');
+    const log=(message)=>{const stamp=new Date().toLocaleString();history.textContent=(history.textContent==='None'?'':history.textContent+' | ')+stamp+': '+message;};
+    if(reject){
+      const currentStage=Number(row.dataset.stage||0);
+      const reason=window.prompt('Enter the reason for disapproval (required). The line item will be excluded from payable payroll totals but retained for audit:');
+      if(reason===null)return;
+      if(!reason.trim()){toast('A disapproval reason is required.');return;}
+      row.dataset.authorisationDecision='rejected'; row.dataset.rejectionReason=reason.trim(); row.dataset.stage='rejected';
+      row.classList.remove('payroll-approved'); row.classList.add('payroll-excluded');
+      stageStatus.textContent='Stage 1: '+(currentStage>=1?'Submitted':'Not submitted');
+      vetterStatus.textContent='Stage 2: '+(currentStage>=2?'Reviewed':'Not completed');
+      adminStatus.textContent='Stage 3: Not approved — disapproved at stage '+(currentStage===0?'1 (Auditor) ':currentStage===1?'2 (Vetter) ':'3 (Super Admin) ');
+      decision.textContent='REJECTED — EXCLUDED FROM PAYABLE PAYROLL. Reason: '+reason.trim();
+      row.children[6].innerHTML='<span class="status overdue">Rejected — excluded</span>';
+      cell.querySelectorAll('button').forEach(b=>b.disabled=true);
+      refreshWorkflowCounts();
+      log('Disapproved at '+(currentStage===0?'Auditor stage':currentStage===1?'Vetter stage':'Super Admin stage')+'; excluded from payable payroll. Reason: '+reason.trim());
+      toast('Line item disapproved and excluded from payable totals. Audit reference retained: '+row.dataset.lineRef+'.');
+      return;
+    }
+    if(row.dataset.stage==='rejected'||row.dataset.stage==='3'){
+      toast('This item is already rejected or finally approved.');return;
+    }
+    const action=stageBtn.dataset.stageAction, stage=Number(row.dataset.stage||0);
+    if(action==='auditor'&&stage===0){
+      row.dataset.stage='1'; stageStatus.textContent='Stage 1: Auditor submitted payroll line item';
+      vetterStatus.textContent='Stage 2: Awaiting vetter review'; stageBtn.disabled=true;
+      cell.querySelector('[data-stage-action="vetter"]').disabled=false;
+      log('Auditor/payroller submitted item for vetting');toast('Submitted to Vetter. Reference: '+row.dataset.lineRef+'.');
+    } else if(action==='vetter'&&stage===1){
+      row.dataset.stage='2'; vetterStatus.textContent='Stage 2: Vetter verified — evidence review recorded';
+      adminStatus.textContent='Stage 3: Awaiting Super Admin final approval'; stageBtn.disabled=true;
+      cell.querySelector('[data-stage-action="admin"]').disabled=false;
+      log('Vetter verified line item and forwarded for final approval');toast('Vetter stage completed. Sent to Super Admin.');
+    } else if(action==='admin'&&stage===2){
+      row.dataset.stage='3'; row.dataset.authorisationDecision='approved';
+      row.classList.remove('payroll-excluded');row.classList.add('payroll-approved');
+      adminStatus.textContent='Stage 3: Super Admin approved for payroll';
+      decision.textContent='APPROVED FOR PAYROLL — all three stages completed';
+      row.children[6].innerHTML='<span class="status completed">Approved for payroll</span>';
+      cell.querySelectorAll('button').forEach(b=>b.disabled=true);
+      refreshWorkflowCounts();
+      log('Super Admin gave final approval for payroll');toast('Final approval recorded for '+row.dataset.lineRef+'.');
+    } else {
+      toast('Approval stages must be completed in order: Auditor, Vetter, then Super Admin.');
+    }
+  });
+  $('#varianceExport')?.addEventListener('click',()=>{const rows=[['Previous month',$('#previousPayMonth').value],['Current month',$('#currentPayMonth').value],[],['Staff / Payroll Ref.','Previous month','Current month','Difference / issue','Classification','Required action','Resolution status']];$$('#varianceRows tr').forEach(tr=>{if(tr.style.display==='none')return;rows.push([...tr.children].map(td=>td.innerText.trim().replace(/\s+/g,' ')));});exportCSV('monthly-payroll-variance-report.csv',rows);});
+
+  const fmtNaira = n => '₦' + (Number(n)||0).toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const numberVal = id => Math.max(0, Number($('#'+id).value)||0);
+  function calcPayrollAnalytics(){
+    const pairs=[['approved','prevApprovedTotal','currApprovedTotal'],['basic','prevBasicSalary','currBasicSalary'],['allowance','prevAllowances','currAllowances'],['deductions','prevDeductions','currDeductions'],['staff','prevStaffStrength','currStaffStrength']];
+    const results={};
+    pairs.forEach(([key,p,c])=>{const a=numberVal(p),b=numberVal(c),diff=b-a,pct=a===0?(b===0?0:100):(diff/a*100);results[key]={previous:a,current:b,diff,pct};});
+    const fmtDiff = n => (n>0?'+':n<0?'−':'')+money(Math.abs(n));
+    $('#approvedVariation').textContent=fmtDiff(results.approved.diff);$('#approvedVariationPct').textContent=(results.approved.pct>0?'+':'')+results.approved.pct.toFixed(2)+'% month-on-month';
+    $('#basicVariation').textContent=fmtDiff(results.basic.diff);$('#basicVariationPct').textContent=(results.basic.pct>0?'+':'')+results.basic.pct.toFixed(2)+'% month-on-month';
+    $('#allowanceVariation').textContent=fmtDiff(results.allowance.diff);$('#allowanceVariationPct').textContent=(results.allowance.pct>0?'+':'')+results.allowance.pct.toFixed(2)+'% month-on-month';
+    $('#staffVariation').textContent=(results.staff.diff>0?'+':'')+results.staff.diff.toLocaleString('en-NG');$('#staffVariationPct').textContent=(results.staff.pct>0?'+':'')+results.staff.pct.toFixed(2)+'% month-on-month';
+    const chartItems=[['approved','approvedBar','approvedBarLabel'],['basic','basicBar','basicBarLabel'],['allowance','allowanceBar','allowanceBarLabel'],['deductions','deductionsBar','deductionsBarLabel']];
+    chartItems.forEach(([k,bar,label])=>{const pct=results[k].pct;$('#'+bar).style.width=Math.min(100,Math.max(2,Math.abs(pct)*10))+'%';$('#'+label).textContent=(pct>0?'+':'')+pct.toFixed(2)+'%';});
+    const up=results.approved.diff>0?'increased':results.approved.diff<0?'decreased':'remained unchanged';
+    $('#payrollAnalysisNote').textContent=`Approved payroll ${up} by ${fmtNaira(Math.abs(results.approved.diff))} (${(results.approved.pct>0?'+':'')+results.approved.pct.toFixed(2)}%). Validate the cause of each variation before approval.`;
+    return results;
+  }
+  $('#calculatePayrollAnalytics')?.addEventListener('click',()=>{calcPayrollAnalytics();toast('Payroll variation analysis recalculated.');});
+  $('#generateSalaryCertificate')?.addEventListener('click',()=>{
+    const r=calcPayrollAnalytics(),prev=$('#previousPayMonth').value,curr=$('#currentPayMonth').value;
+    if(prev===curr){toast('Select different previous and current payroll months before generating the certificate.');return;}
+    const issues=$$('#varianceRows tr').filter(tr=>tr.dataset.issue!=='No change');
+    const unresolved=issues.filter(tr=>/pending|exception|verification|confirmation/i.test(tr.innerText)).length;
+    const status=unresolved?'Pending final clearance':'Ready for authorised sign-off';
+    $('#certificateStatus').textContent=status;$('#certificateStatus').className='status '+(unresolved?'pending':'completed');
+    $('#certificateSubtitle').textContent=`Payroll period: ${curr} | Compared with: ${prev}`;
+    const rows=[['Payroll control measure','Previous month','Current month','Variation'],['Staff strength',r.staff.previous.toLocaleString('en-NG'),r.staff.current.toLocaleString('en-NG'),(r.staff.diff>0?'+':'')+r.staff.diff.toLocaleString('en-NG')],['Total basic salary',fmtNaira(r.basic.previous),fmtNaira(r.basic.current),fmtNaira(r.basic.diff)],['Total allowances',fmtNaira(r.allowance.previous),fmtNaira(r.allowance.current),fmtNaira(r.allowance.diff)],['Total deductions',fmtNaira(r.deductions.previous),fmtNaira(r.deductions.current),fmtNaira(r.deductions.diff)],['Total approved payroll',fmtNaira(r.approved.previous),fmtNaira(r.approved.current),fmtNaira(r.approved.diff)]];
+    const esc = v=>String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    $('#certificateBody').innerHTML=`<div style="padding:18px 20px"><p style="text-align:center;font-size:18px;font-weight:800;color:#174574;margin:0 0 5px">SALARY VETTING AUDIT CERTIFICATE</p><p style="text-align:center;margin:0 0 20px;color:#65738a">Monthly Payroll Review and Variance Certification</p><p><strong>Payroll month:</strong> ${esc(curr)} &nbsp; <strong>Comparison month:</strong> ${esc(prev)}</p><p><strong>Certification status:</strong> ${esc(status)}</p><table><thead><tr>${rows[0].map(v=>'<th>'+esc(v)+'</th>').join('')}</tr></thead><tbody>${rows.slice(1).map(row=>'<tr>'+row.map(v=>'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')}</tbody></table><h4 style="margin:20px 0 8px;color:#174574">Vetting summary</h4><p>Salary variations identified: ${$('#varianceCount').textContent}; possible duplicates: ${$('#duplicateCount').textContent}; missing / possible exits: ${$('#exitCount').textContent}; new additions: ${$('#additionCount').textContent}.</p><p><strong>Auditor's conclusion:</strong> The payroll figures above are based on the aggregate values entered for this review. Differences must be supported by authorised payroll records, HR confirmations and approved salary schedules. This certificate should not be treated as final approval until all exceptions are resolved and the authorised officers have signed.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:35px;margin-top:38px"><div style="border-top:1px solid #64748b;padding-top:8px">Prepared by / Auditor<br><br>Name: ____________________<br>Date: _____________________</div><div style="border-top:1px solid #64748b;padding-top:8px">Reviewed / Approved by<br><br>Name: ____________________<br>Date: _____________________</div></div><p style="font-size:11px;color:#65738a;margin-top:24px">System-generated draft based on user-entered aggregate totals. Verify source records and obtain authorised signatures before official use.</p></div>`;
+    $('#salaryCertificate').style.display='block';$('#salaryCertificate').scrollIntoView({behavior:'smooth',block:'start'});toast('Draft salary vetting audit certificate generated.');
+  });
+  $('#printSalaryCertificate')?.addEventListener('click',()=>{document.body.classList.add('print-salary-certificate');window.print();document.body.classList.remove('print-salary-certificate');});
+  calcPayrollAnalytics();
+  function exportCSV(filename, rows) {
+    const csv = rows.map(row => row.map(v => '"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url);
+    toast('Export prepared: '+filename);
+  }
+  $('#newAuditBtn').addEventListener('click', () => openModal('audit'));
+  $('#globalSearch').addEventListener('input', e => {
+    const q=e.target.value.toLowerCase().trim();
+    const activeTable = $('.page-section.active table');
+    if (!activeTable) return;
+    let matches=0;
+    $$('tbody tr', activeTable).forEach(row => { const ok=row.textContent.toLowerCase().includes(q); row.style.display=ok?'':'none'; if(ok)matches++; });
+    if(q && !matches) toast('No matching records on this page.');
+  });
+  document.addEventListener('click', e => {
+    if (e.target.closest('.row-actions')) toast('Audit actions: open record, edit details or view audit trail (demo UI).');
+    if (e.target.closest('.view-record')) toast('Report detail view is a prototype. Connect a report repository to open the full document.');
+  });
+
+  const modalDefs = {
+    audit:{title:'Create audit plan',submit:'Save audit plan',fields:[['title','Audit title','text','e.g. Vendor management review'],['department','Department','select',['Procurement','Finance','Information Technology','Human Resources','Operations','Marine Operations']],['lead','Lead auditor','text','Enter lead auditor'],['due','Target date','date','']]},
+    event:{title:'Add schedule item',submit:'Add schedule item',fields:[['title','Event title','text','e.g. Audit opening meeting'],['date','Date','date',''],['time','Time','text','e.g. 10:00 AM'],['location','Location','text','Meeting room / department']]},
+    report:{title:'Create audit report',submit:'Save report',fields:[['title','Report title','text','Enter report title'],['reference','Report reference','text','e.g. RPT-2026-015'],['department','Department','select',['Procurement','Finance','Information Technology','Human Resources','Operations']],['status','Status','select',['In preparation','Pending review','Approved']]]},
+    finding:{title:'Record audit finding',submit:'Save finding',fields:[['title','Finding title','text','Describe the control gap'],['area','Audit area','text','e.g. Procurement'],['owner','Action owner','text','Responsible role / person'],['priority','Priority','select',['High','Medium','Low']],['due','Target date','date','']]},
+    risk:{title:'Add risk assessment',submit:'Save risk',fields:[['title','Risk description','text','Describe the risk'],['owner','Risk owner','text','Responsible department / role'],['severity','Risk severity','select',['High','Medium','Low']],['mitigation','Mitigation action','text','Planned treatment / control']]},
+    compliance:{title:'Add compliance control',submit:'Save control',fields:[['title','Control / requirement','text','Policy or control requirement'],['owner','Control owner','text','Responsible department'],['review','Next review date','date',''],['status','Compliance status','select',['Compliant','Partially compliant','Non-compliant']]]},
+    user:{title:'Add user',submit:'Create demo user',fields:[['name','Full name','text','Enter full name'],['email','Work email','email','name@organisation.gov'],['department','Department','select',['Internal Audit','Procurement','Finance','Information Technology','Human Resources','Operations']],['role','Role','select',['Administrator','Audit Manager','Lead Auditor','Auditor','Read-only Reviewer']] ]},
+    salary:{title:'New salary vetting record',submit:'Save vetting record',fields:[['staffId','Staff ID','text','e.g. STF-00725'],['staffName','Staff name','text','Enter staff name'],['payrollRef','Payroll reference','text','e.g. PAY-2026-10-0725'],['department','Department','select',['Finance','Procurement','Information Technology','Human Resources','Operations','Marine Operations','Internal Audit']],['period','Pay period','text','e.g. Oct 2026'],['gross','Gross salary (NGN)','number',''],['deductions','Total authorised deductions (NGN)','number',''],['status','Vetting status','select',['Pending review','Cleared','Exception']],['notes','Vetting notes / exception','text','Describe checks performed or discrepancy']]}
+  };
+  function openModal(type) {
+    const def=modalDefs[type]; if(!def)return;
+    const root=$('#modalRoot'); root.className='modal-backdrop';
+    const formFields=def.fields.map(([name,label,inputType,extra])=>{
+      let control='';
+      if(inputType==='select') control=`<select name="${name}" required>${extra.map(v=>`<option>${v}</option>`).join('')}</select>`;
+      else control=`<input name="${name}" type="${inputType}" ${inputType==='text'||inputType==='email'?'placeholder="'+extra+'"':''} required>`;
+      return `<div class="field"><label>${label.toUpperCase()}</label>${control}</div>`;
+    }).join('');
+    root.innerHTML=`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><h3 id="modalTitle">${def.title}</h3><button class="modal-close" type="button" aria-label="Close">×</button></div><form id="modalForm"><div class="modal-body"><div class="modal-grid">${formFields}</div></div><div class="modal-actions"><button class="secondary-btn modal-cancel" type="button">Cancel</button><button class="gold-btn" type="submit">${def.submit}</button></div></form></div>`;
+    root.querySelector('.modal-close').addEventListener('click',closeModal); root.querySelector('.modal-cancel').addEventListener('click',closeModal);
+    root.addEventListener('click', e=>{if(e.target===root)closeModal();},{once:true});
+    $('#modalForm').addEventListener('submit',e=>{e.preventDefault(); const data=Object.fromEntries(new FormData(e.target).entries()); saveRecord(type,data);closeModal();});
+    const first=root.querySelector('input,select'); if(first)first.focus();
+  }
+  function closeModal(){const root=$('#modalRoot');root.className='hidden';root.innerHTML='';}
+  function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function saveRecord(type,d){
+    if(type==='audit'){
+      auditCount++; $('#metricTotal').textContent=auditCount;
+      const row=document.createElement('tr');
+      row.innerHTML=`<td><div class="audit-name">${esc(d.title)}</div><div class="subline">AUD-2026-${String(auditCount).padStart(3,'0')}</div></td><td>${esc(d.department)}</td><td>${esc(d.lead)}</td><td>${esc(d.due||'—')}</td><td><span class="priority medium">Medium</span></td><td><span class="status pending">Pending</span></td><td><button class="row-actions" aria-label="Audit actions">···</button></td>`;
+      $('#auditTable tbody').prepend(row); navigate('dashboard'); toast('Audit plan added to the demo register.');
+    } else if(type==='finding'){
+      findingCount++;$('#metricFindings').textContent=findingCount;$('#findingOpen').textContent=findingCount;
+      const row=document.createElement('tr'); row.innerHTML=`<td><div class="audit-name">${esc(d.title)}</div><div class="subline">FND-2026-${String(findingCount+20).padStart(3,'0')}</div></td><td>${esc(d.area)}</td><td>${esc(d.owner)}</td><td><span class="priority ${d.priority.toLowerCase()}">${esc(d.priority)}</span></td><td>${esc(d.due||'—')}</td><td><span class="status in-progress">Open</span></td>`;
+      $('#findingRows').prepend(row);navigate('findings');toast('Finding added to the demo register.');
+    } else if(type==='user'){
+      const row=document.createElement('tr');row.innerHTML=`<td><div class="audit-name">${esc(d.name)}</div><div class="subline">${esc(d.email)}</div></td><td>${esc(d.department)}</td><td>${esc(d.role)}</td><td>Just now</td><td><span class="status pending">Invited</span></td>`;
+      $('#userRows').prepend(row);navigate('users');toast('Demo user added. No invitation was sent.');
+    } else if(type==='report'){
+      const row=document.createElement('tr');row.innerHTML=`<td><div class="audit-name">${esc(d.title)}</div></td><td>${esc(d.reference||'Draft')}</td><td>${esc(d.department)}</td><td>—</td><td><span class="status ${d.status==='Approved'?'completed':d.status==='Pending review'?'pending':'in-progress'}">${esc(d.status)}</span></td><td><button class="panel-action view-record">View</button></td>`;
+      $('#reportRows').prepend(row);navigate('reports');toast('Report record created in the demo register.');
+    } else if(type==='event'){
+      const date=d.date?new Date(d.date+'T12:00:00'):null;
+      const day=date?String(date.getDate()).padStart(2,'0'):'—', month=date?date.toLocaleString('en',{month:'short'}):'TBD';
+      const item=document.createElement('div');item.className='schedule-item';item.innerHTML=`<div class="date-box"><strong>${day}</strong><small>${month}</small></div><div class="schedule-copy"><strong>${esc(d.title)}</strong><small>${esc(d.time||'Time not set')} · ${esc(d.location||'Location not set')}</small></div><span class="schedule-tag">Event</span>`;
+      $('#scheduleList').prepend(item);navigate('schedule');toast('Schedule item added to the demo calendar.');
+    } else if(type==='salary'){
+      const gross=Number(d.gross), deductions=Number(d.deductions), net=gross-deductions;
+      if(!Number.isFinite(gross)||!Number.isFinite(deductions)||gross<0||deductions<0||deductions>gross){toast('Check the salary amounts. Deductions must be non-negative and cannot exceed gross salary.');return;}
+      const row=document.createElement('tr');
+      const statusClass=d.status==='Cleared'?'completed':d.status==='Exception'?'overdue':'pending';
+      row.innerHTML=`<td><div class="audit-name">${esc(d.staffId)} · ${esc(d.staffName)}</div><div class="subline">${esc(d.payrollRef)}</div></td><td>${esc(d.department)}</td><td>${esc(d.period)}</td><td>${money(gross)}</td><td>${money(deductions)}</td><td>${money(net)}</td><td><span class="status ${statusClass}">${esc(d.status)}</span></td><td>${esc(d.notes||'—')}</td>`;
+      $('#salaryRows').prepend(row);
+      const total=$$('#salaryRows tr').length; $('#salaryTotal').textContent=total;
+      const pending=$$('#salaryRows .status.pending').length; const cleared=$$('#salaryRows .status.completed').length; const exceptions=$$('#salaryRows .status.overdue').length;
+      $('#salaryPending').textContent=Math.max(0,4+pending-1); $('#salaryCleared').textContent=cleared; $('#salaryExceptions').textContent=exceptions;
+      navigate('salary');toast('Salary vetting record added to the demo register.');
+    } else if(type==='risk'){navigate('risk');toast('Risk assessment saved to this demo session. Connect a database for persistent records.');}
+    else if(type==='compliance'){navigate('compliance');toast('Compliance control saved to this demo session. Connect a database for persistent records.');}
+  }
+  function money(value){return '₦'+Number(value).toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2});}
+})();
+</script>
+</body>
+</html>
